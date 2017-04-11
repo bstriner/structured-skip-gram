@@ -71,13 +71,24 @@ def decoder_input_step(h_0, z, W, U, b):
     return T.tanh(T.dot(h_0, W) + T.dot(z, U) + b)
 
 
-def decoder_inner_input_params(layer, units, k, latent_dim, name):
+def decoder_inner_input_params(layer, units, k, name):
     params_input = [make_W(layer, (units, units), "{}_W".format(name)),  # hidden
                     make_W(layer, (k + 2, units), "{}_U".format(name)),  # previous character
-                    make_W(layer, (latent_dim, units), "{}_V".format(name)),  # hidden representation
+                    make_W(layer, (units, units), "{}_V".format(name)),  # hidden representation
                     make_b(layer, (units,), '{}_b'.format(name))]
     return params_input
 
 
 def decoder_inner_input_step(h_0, x_0, z, W, U, V, b):
     return T.tanh(T.dot(h_0, W) + U[x_0, :] + T.dot(z, V) + b)
+
+def discrete_lstm_params(layer, units, k, name):
+    params_input = [make_W(layer, (units, units), "{}_W".format(name)),  # hidden
+                    make_W(layer, (k, units), "{}_U".format(name)),  # discrete input
+                    make_b(layer, (units,), '{}_b'.format(name))]
+    return params_input
+
+
+def discrete_lstm_step(h_0, x_0, W, U, b):
+    return T.tanh(T.dot(h_0, W) + U[x_0, :] + b)
+
